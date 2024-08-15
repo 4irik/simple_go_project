@@ -2,27 +2,28 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func main() {
-	var name string
+	var input string
 	var whiteList = NewSliceWhiteList()
 	whiteList.Add("Иван")
 	whiteList.Add("Пётр")
 	whiteList.Add("Николай")
 
-loop:
+	fmt.Print("Введите имя: ")
+	fmt.Scanf("%s", &input)
+	if !whiteList.IsExist(input) {
+		fmt.Printf("Name \"%s\" not allowed. Please, change you name.\n", input)
+		os.Exit(0)
+	}
+
 	for {
-		fmt.Print("Введите имя: ")
-		fmt.Scanf("%s", &name)
-		switch true {
-		case name == "exit":
-			break loop
-		case whiteList.IsExist(name):
-			fmt.Printf("Hello %s!\n", name)
-		default:
-			fmt.Printf("Name \"%s\" not allowed. Please, change you name.\n", name)
-			break loop
+		fmt.Print("Введите комманду: ")
+		fmt.Scanf("%s", &input)
+		if input == "exit" {
+			os.Exit(0)
 		}
 	}
 }
