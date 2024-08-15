@@ -6,7 +6,7 @@ import (
 
 func main() {
 	var name string
-	var whiteList = new(SliceWhiteList)
+	var whiteList = NewSliceWhiteList()
 	whiteList.Add("Иван")
 	whiteList.Add("Пётр")
 	whiteList.Add("Николай")

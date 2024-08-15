@@ -14,6 +14,10 @@ type WhiteList interface {
 	IsExist(string) bool
 }
 
+func NewSliceWhiteList() *SliceWhiteList {
+	return new(SliceWhiteList)
+}
+
 func (wl *SliceWhiteList) Add(newName string) bool {
 	newName = strings.TrimSpace(newName)
 	if newName == "" || wl.IsExist(newName) {
