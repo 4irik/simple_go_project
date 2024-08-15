@@ -22,8 +22,14 @@ func main() {
 	for {
 		fmt.Print("Введите комманду: ")
 		fmt.Scanf("%s", &input)
-		if input == "exit" {
+		switch input {
+		case "exit":
 			os.Exit(0)
+		case "print":
+			fmt.Println("Список разрешённых имён:")
+			for k, name := range whiteList.names {
+				fmt.Printf("%d. %s\n", k+1, name)
+			}
 		}
 	}
 }
