@@ -5,16 +5,16 @@ import (
 	"strings"
 )
 
-type WhiteList struct {
+type SliceWhiteList struct {
 	names []string
 }
 
-type WhiteListInterface interface {
+type WhiteList interface {
 	Add(string) bool
 	IsExist(string) bool
 }
 
-func (wl *WhiteList) Add(newName string) bool {
+func (wl *SliceWhiteList) Add(newName string) bool {
 	newName = strings.TrimSpace(newName)
 	if newName == "" || wl.IsExist(newName) {
 		return false
@@ -23,6 +23,6 @@ func (wl *WhiteList) Add(newName string) bool {
 	return true
 }
 
-func (wl *WhiteList) IsExist(name string) bool {
+func (wl *SliceWhiteList) IsExist(name string) bool {
 	return slices.Contains(wl.names, name)
 }

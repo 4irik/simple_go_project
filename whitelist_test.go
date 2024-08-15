@@ -7,22 +7,22 @@ import (
 
 type testpair struct {
 	name      string
-	whiteList WhiteList
+	whiteList SliceWhiteList
 	expected  bool
 }
 
 var testsIsExist = []testpair{
-	{"Иван", WhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", WhiteList{names: []string{}}, false},
-	{"", WhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", WhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, true},
+	{"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
+	{"Иван", SliceWhiteList{names: []string{}}, false},
+	{"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
+	{"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, true},
 }
 
 var testAdd = []testpair{
-	{"Иван", WhiteList{names: []string{"Пётр", "Сергей"}}, true},
-	{"Иван", WhiteList{names: []string{}}, true},
-	{"", WhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", WhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, false},
+	{"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, true},
+	{"Иван", SliceWhiteList{names: []string{}}, true},
+	{"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
+	{"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, false},
 }
 
 func TestIsExist(t *testing.T) {
