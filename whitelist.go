@@ -1,6 +1,7 @@
 package main
 
 import (
+	"iter"
 	"slices"
 	"strings"
 )
@@ -12,6 +13,7 @@ type SliceWhiteList struct {
 type WhiteList interface {
 	Add(string) bool
 	IsExist(string) bool
+	Names() iter.Seq[string]
 }
 
 func NewSliceWhiteList() *SliceWhiteList {
@@ -29,4 +31,14 @@ func (wl *SliceWhiteList) Add(newName string) bool {
 
 func (wl *SliceWhiteList) IsExist(name string) bool {
 	return slices.Contains(wl.names, name)
+}
+
+func (wl *SliceWhiteList) Names() iter.Seq2[int, string] {
+	return func(yield func(int, string) bool) {
+		for key, name := range wl.names {
+			if !yield(key, name) {
+				return
+			}
+		}
+	}
 }

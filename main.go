@@ -27,7 +27,7 @@ func main() {
 			os.Exit(0)
 		case "print":
 			fmt.Println("Список разрешённых имён:")
-			for k, name := range whiteList.names {
+			for k, name := range whiteList.Names() {
 				fmt.Printf("%d. %s\n", k+1, name)
 			}
 		}
