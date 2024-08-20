@@ -29,6 +29,22 @@ func (wl *SliceWhiteList) Add(newName string) bool {
 	return true
 }
 
+func (wl *SliceWhiteList) Delete(name string) bool {
+	name = strings.TrimSpace(name)
+	if name == "" || !wl.IsExist(name) {
+		return false
+	}
+	i := slices.IndexFunc(wl.names, func(s string) bool {
+		return s == name
+	})
+
+	head := wl.names[0:i]
+	tail := wl.names[(i + 1):]
+	wl.names = append(head, tail...)
+
+	return true
+}
+
 func (wl *SliceWhiteList) IsExist(name string) bool {
 	return slices.Contains(wl.names, name)
 }
