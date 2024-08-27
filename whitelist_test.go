@@ -1,84 +1,99 @@
 package main
 
 import (
-	"fmt"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/suite"
 )
 
-type testpair struct {
-	name      string
-	whiteList SliceWhiteList
-	expected  bool
+type WhiteListTestSuite struct {
+	suite.Suite
 }
 
-var testsIsExist = []testpair{
-	{"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", SliceWhiteList{names: []string{}}, false},
-	{"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, true},
-}
+func (suite *WhiteListTestSuite) TestIsExist() {
+	tests := map[string]struct {
+		name      string
+		whiteList SliceWhiteList
+		expected  bool
+	}{
+		"Имени нет в списке":   {"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
+		"Список пуст":          {"Иван", SliceWhiteList{names: []string{}}, false},
+		"Имя из пустой строки": {"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
+		"Имя есть в списке":    {"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, true},
+	}
 
-var testAdd = []testpair{
-	{"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, true},
-	{"Иван", SliceWhiteList{names: []string{}}, true},
-	{"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false},
-	{"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, false},
-}
-
-func TestIsExist(t *testing.T) {
-	for _, pair := range testsIsExist {
-		v := pair.whiteList.IsExist(pair.name)
-		if v != pair.expected {
-			t.Error(
-				"For name", pair.name,
-				"whiteList ", pair.whiteList,
-				"expected", pair.expected,
-				"got", v,
-			)
-		}
+	for name, tc := range tests {
+		suite.Run(name, func() {
+			got := tc.whiteList.IsExist(tc.name)
+			suite.Equal(got, tc.expected, "Ответ не соответсвует ожиданию")
+		})
 	}
 }
 
-func TestAdd(t *testing.T) {
-	for _, pair := range testAdd {
-		v := pair.whiteList.Add(pair.name)
-		if v != pair.expected {
-			t.Error(
-				"For name", fmt.Sprintf("\"%s\"", pair.name),
-				"whiteList ", pair.whiteList,
-				"expected", pair.expected,
-				"got", v,
-			)
-		}
+func (suite *WhiteListTestSuite) TestAdd() {
+	tests := map[string]struct {
+		name             string
+		whiteList        SliceWhiteList
+		expectedResponse bool
+		expectedList     []string
+	}{
+		"Новое имя": {"Иван", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, true, []string{"Пётр", "Сергей", "Иван"}},
+		"Добавляем в пустой список": {"Иван", SliceWhiteList{names: []string{}}, true, []string{"Иван"}},
+		"Пустое имя":                {"", SliceWhiteList{names: []string{"Пётр", "Сергей"}}, false, []string{"Пётр", "Сергей"}},
+		"Имя уже есть в списке":     {"Иван", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, false, []string{"Пётр", "Иван", "Сергей"}},
+		"`trim` на имя":             {" Николай ", SliceWhiteList{names: []string{"Пётр", "Иван", "Сергей"}}, true, []string{"Пётр", "Иван", "Сергей", "Николай"}},
+	}
+	for name, tc := range tests {
+		suite.Run(name, func() {
+			got := tc.whiteList.Add(tc.name)
+			suite.Equal(got, tc.expectedResponse, "Ответ не соответсвует ожиданию")
+			suite.Equal(tc.expectedList, tc.whiteList.names, "Списко имён не соответсвует ожиданию")
+		})
 	}
 }
 
-func TestDelete(t *testing.T) {
-	type TestPair struct {
+func (suite *WhiteListTestSuite) TestDelete() {
+	tests := map[string]struct {
 		delName        string
-		before         SliceWhiteList
+		whiteList      SliceWhiteList
 		expectedResult bool
-		after          SliceWhiteList
+		expectedList   []string
+	}{
+		"Пустое имя":         {"", SliceWhiteList{names: []string{"Иван", "Пётр"}}, false, []string{"Иван", "Пётр"}},
+		"Имени нет в списке": {"Антон", SliceWhiteList{names: []string{"Иван", "Пётр"}}, false, []string{"Иван", "Пётр"}},
+		"Имя удалено":        {"Иван", SliceWhiteList{names: []string{"Иван", "Пётр"}}, true, []string{"Пётр"}},
+		"`trim` на имя":      {" Пётр ", SliceWhiteList{names: []string{"Иван", "Пётр"}}, true, []string{"Иван"}},
 	}
 
-	testpair := []TestPair{
-		{"", SliceWhiteList{names: []string{"Иван", "Пётр"}}, false, SliceWhiteList{names: []string{"Иван", "Пётр"}}},
-		{"Антон", SliceWhiteList{names: []string{"Иван", "Пётр"}}, false, SliceWhiteList{names: []string{"Иван", "Пётр"}}},
-		{"Иван", SliceWhiteList{names: []string{"Иван", "Пётр"}}, true, SliceWhiteList{names: []string{"Пётр"}}},
-		{" Пётр ", SliceWhiteList{names: []string{"Иван", "Пётр"}}, true, SliceWhiteList{names: []string{"Иван"}}},
+	for name, tc := range tests {
+		suite.Run(name, func() {
+			got := tc.whiteList.Delete(tc.delName)
+			suite.Equal(got, tc.expectedResult, "Ответ не соответсвует ожиданию")
+			suite.Equal(tc.expectedList, tc.whiteList.names, "Списко имён не соответсвует ожиданию")
+		})
+	}
+}
+
+func (suite *WhiteListTestSuite) TestNames() {
+	tests := map[string]struct {
+		whiteList      SliceWhiteList
+		expectedResult map[int]string
+	}{
+		"Пустой список":    {SliceWhiteList{names: []string{}}, map[int]string{}},
+		"Не пустой список": {SliceWhiteList{names: []string{"Иван", "Пётр"}}, map[int]string{0: "Иван", 1: "Пётр"}},
 	}
 
-	for _, pair := range testpair {
-		v := pair.before.Delete(pair.delName)
-		if v != pair.expectedResult || !reflect.DeepEqual(pair.before, pair.after) {
-			t.Error(
-				"For name", fmt.Sprintf("\"%s\"", pair.delName),
-				"before ", pair.before,
-				"after ", pair.after,
-				"expected result", pair.expectedResult,
-				"got result", v,
-			)
-		}
+	for name, tc := range tests {
+		suite.Run(name, func() {
+			got := make(map[int]string)
+			for k, name := range tc.whiteList.Names() {
+				got[k] = name
+			}
+			suite.Equal(tc.expectedResult, got, "Списко имён не соответсвует ожиданию")
+		})
 	}
+}
+
+func TestWhitelistSuite(t *testing.T) {
+	suite.Run(t, new(WhiteListTestSuite))
 }
