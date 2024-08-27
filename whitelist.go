@@ -13,7 +13,7 @@ type SliceWhiteList struct {
 type WhiteList interface {
 	Add(string) bool
 	IsExist(string) bool
-	Names() iter.Seq[string]
+	Names() iter.Seq2[int, string]
 }
 
 func NewSliceWhiteList() *SliceWhiteList {
