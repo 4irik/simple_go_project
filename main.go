@@ -7,18 +7,27 @@ import (
 
 func main() {
 	var input string
-	var whiteList = NewSliceWhiteList()
+	whiteList := NewSliceWhiteList()
 	whiteList.Add("Иван")
 	whiteList.Add("Пётр")
 	whiteList.Add("Николай")
 
-	fmt.Print("Введите имя: ")
-	fmt.Scanf("%s", &input)
-	if !whiteList.IsExist(input) {
-		fmt.Printf("Name \"%s\" not allowed. Please, change you name.\n", input)
-		os.Exit(0)
-	}
+	for {
+		fmt.Print("Введите имя: ")
+		fmt.Scanf("%s", &input)
+		if !whiteList.IsExist(input) {
+			fmt.Printf("Name \"%s\" not allowed. Please, change you name.\n", input)
+			os.Exit(0)
+		}
 
+		autorityActionLoop(whiteList)
+	}
+}
+
+func autorityActionLoop(whiteList WhiteList) {
+	var input string
+
+loop:
 	for {
 		fmt.Print("Введите комманду: ")
 		fmt.Scanf("%s", &input)
@@ -46,6 +55,10 @@ func main() {
 			} else {
 				fmt.Printf("Warn. Имя \"%s\" отсутствует в списке\n", input)
 			}
+		case "logout":
+			break loop
+		default:
+			fmt.Printf("Команда \"%s\" не распознана\n", input)
 		}
 		input = ""
 	}
