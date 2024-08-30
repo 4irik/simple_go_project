@@ -36,7 +36,7 @@ func main() {
 			os.Exit(0)
 		}
 
-		autorityActionLoop(whiteList)
+		autorityActionLoop(whiteList, *filePath)
 	}
 }
 
@@ -44,7 +44,7 @@ func setDefaultNames(whiteList WhiteList) {
 	whiteList.Add("Иван")
 }
 
-func autorityActionLoop(whiteList WhiteList) {
+func autorityActionLoop(whiteList WhiteList, filePath string) {
 	var input string
 
 loop:
@@ -77,6 +77,22 @@ loop:
 			}
 		case "logout":
 			break loop
+		case "save":
+			if filePath == "" {
+				fmt.Print("Введите имя файла: ")
+				fmt.Scanf("%s", &filePath)
+			}
+
+			buf := ""
+			for _, name := range whiteList.Names() {
+				buf += name + "\n"
+			}
+			err := os.WriteFile(filePath, []byte(buf), 0666)
+			if err != nil {
+				panic(err)
+			}
+
+			fmt.Println("Изменения сохранены в файл:", filePath)
 		default:
 			fmt.Printf("Команда \"%s\" не распознана\n", input)
 		}
