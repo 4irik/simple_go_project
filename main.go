@@ -1,16 +1,32 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
 	var input string
 	whiteList := NewSliceWhiteList()
-	whiteList.Add("Иван")
-	whiteList.Add("Пётр")
-	whiteList.Add("Николай")
+
+	filePath := flag.String("file", "", "Путь до файла с именами")
+	flag.Parse()
+
+	if *filePath == "" {
+		fmt.Println("Путь до файла не задан. Загружается стандартный набор имён")
+		setDefaultNames(whiteList)
+	} else {
+		fmt.Println("Чтение имён из файла:", *filePath)
+		bs, err := os.ReadFile(*filePath)
+		if err != nil {
+			panic(err)
+		}
+		for _, name := range strings.Split(string(bs), "\n") {
+			whiteList.Add(name)
+		}
+	}
 
 	for {
 		fmt.Print("Введите имя: ")
@@ -22,6 +38,10 @@ func main() {
 
 		autorityActionLoop(whiteList)
 	}
+}
+
+func setDefaultNames(whiteList WhiteList) {
+	whiteList.Add("Иван")
 }
 
 func autorityActionLoop(whiteList WhiteList) {
