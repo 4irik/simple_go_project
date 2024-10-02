@@ -21,4 +21,7 @@ build: ## Build app
 	docker run $(DC_RUN_ARGS_DEF) $(DC_RUN_ARGS_USER) $(DC_CONTAINER_NAME) $(SHELL) -c "${DC_RUN_PREPARE} && go build -v"
 
 test: ## Run tests
-	docker run $(DC_RUN_ARGS_DEF) $(DC_RUN_ARGS_USER) $(DC_CONTAINER_NAME) $(SHELL) -c "${DC_RUN_PREPARE} && go test"
+	docker run $(DC_RUN_ARGS_DEF) $(DC_RUN_ARGS_USER) $(DC_CONTAINER_NAME) $(SHELL) -c "${DC_RUN_PREPARE} && go test ./..."
+
+run: ## Run app
+	docker run $(DC_RUN_ARGS_DEF) $(DC_RUN_ARGS_USER) $(DC_CONTAINER_NAME) $(SHELL) -c "${DC_RUN_PREPARE} && go run main.go"
